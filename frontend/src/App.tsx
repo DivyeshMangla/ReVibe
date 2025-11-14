@@ -7,6 +7,7 @@ import { EmployeeProfileView } from './pages/EmployeeProfileView';
 import { PromotionsPanel } from './pages/PromotionsPanel';
 import { SalaryCorrectionsView } from './pages/SalaryCorrectionsView';
 import { ChatbotPanel } from './pages/ChatbotPanel';
+import { LoginPage } from './pages/LoginPage';
 import { useAuthStore } from './state/auth.store';
 
 const queryClient = new QueryClient({
@@ -37,12 +38,7 @@ function App() {
             <Route path="corrections" element={<SalaryCorrectionsView />} />
             <Route path="chatbot" element={<ChatbotPanel />} />
           </Route>
-          <Route path="/login" element={<div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg">
-              <h1 className="text-2xl font-bold mb-4">Login</h1>
-              <p className="text-gray-600">Login page stub - JWT authentication required</p>
-            </div>
-          </div>} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
