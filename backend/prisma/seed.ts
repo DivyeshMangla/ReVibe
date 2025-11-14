@@ -169,7 +169,7 @@ async function main() {
         salarySlipId: slip.id,
         requestedBy: employee1.id,
         reason: 'Missing performance bonus',
-        changes: JSON.stringify({ otherEarnings: 10000 }),
+        changes: { otherEarnings: 10000 },
         status: 'PENDING',
       },
     });

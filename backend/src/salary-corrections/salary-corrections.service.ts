@@ -28,7 +28,7 @@ export class SalaryCorrectionsService {
         salarySlipId,
         requestedBy,
         reason,
-        changes: JSON.stringify(changes),
+        changes,
         status: 'PENDING'
       },
       include: {
@@ -83,7 +83,7 @@ export class SalaryCorrectionsService {
       throw new BadRequestException('Only pending corrections can be approved');
     }
 
-    const changes = JSON.parse(correction.changes as string);
+    const changes = correction.changes as any;
     const currentSlip = correction.salarySlip;
 
     const updatedData = {

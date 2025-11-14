@@ -88,7 +88,7 @@ model Correction {
   salarySlipId  String
   requestedBy   String
   reason        String           @db.Text
-  changes       String           @db.JsonB
+  changes       Json
   status        CorrectionStatus @default(PENDING)
   approvedBy    String?
   rejectedBy    String?
