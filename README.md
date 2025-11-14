@@ -4,12 +4,28 @@ Production-grade HRMS payroll platform built with NestJS, React, and PostgreSQL.
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: Docker (Recommended)
+
+```bash
+# Start all services with one command
+docker-compose up -d
+
+# Access the application
+# Frontend: http://localhost
+# Backend: http://localhost:3000
+# Database: localhost:5432
+```
+
+See [DOCKER.md](DOCKER.md) for detailed Docker documentation.
+
+### Option 2: Local Development
+
+#### Prerequisites
 - Node.js 18+
 - PostgreSQL 14+
 - npm or yarn
 
-### Backend Setup
+#### Backend Setup
 
 ```bash
 cd backend
@@ -21,7 +37,7 @@ npx prisma generate
 npm run start:dev
 ```
 
-### Frontend Setup
+#### Frontend Setup
 
 ```bash
 cd frontend
