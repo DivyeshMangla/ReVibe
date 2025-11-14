@@ -18,14 +18,17 @@ model Employee {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
-  jobProfiles   JobProfile[]
-  salarySlips   SalarySlip[]
-  promotions    Promotion[]
-  leaves        Leave[]
-  transfers     Transfer[]
-  trainings     Training[]
-  acrs          ACR[]
-  evaluations   Evaluation[]
+  jobProfiles      JobProfile[]
+  salarySlips      SalarySlip[]
+  promotions       Promotion[]
+  leaves           Leave[]
+  transfers        Transfer[]
+  trainings        Training[]
+  acrs             ACR[]
+  evaluations      Evaluation[]
+  joiningRelieving JoiningRelieving[]
+  eServiceBooks    EServiceBook[]
+  propertyReturns  PropertyReturn[]
 
   @@map("employees")
 }
@@ -314,4 +317,90 @@ enum EvaluationStatus {
   SUBMITTED
   APPROVED
   REJECTED
+}
+
+model JoiningRelieving {
+  id              String          @id @default(uuid())
+  employeeId      String
+  type            JRType
+  requestDate     DateTime        @default(now())
+  effectiveDate   DateTime
+  reason          String?         @db.Text
+  exitInterview   String?         @db.Text
+  clearanceStatus ClearanceStatus @default(PENDING)
+  fnfSettlement   Float?
+  status          JRStatus        @default(PENDING)
+  approvedBy      String?
+  approvedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("joining_relieving")
+  @@index([employeeId, type])
+}
+
+model EServiceBook {
+  id             String   @id @default(uuid())
+  employeeId     String
+  entryType      String
+  entryDate      DateTime
+  description    String   @db.Text
+  documentUrl    String?
+  verifiedBy     String?
+  verifiedAt     DateTime?
+  createdAt      DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("eservice_books")
+  @@index([employeeId, entryDate])
+}
+
+model PropertyReturn {
+  id              String         @id @default(uuid())
+  employeeId      String
+  itemName        String
+  itemCategory    String
+  serialNumber    String?
+  issuedDate      DateTime
+  returnDate      DateTime?
+  condition       String?
+  status          PropertyStatus @default(ISSUED)
+  remarks         String?        @db.Text
+  submittedAt     DateTime?
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  createdAt       DateTime       @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("property_returns")
+  @@index([employeeId, status])
+}
+
+enum JRType {
+  JOINING
+  RELIEVING
+}
+
+enum JRStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum ClearanceStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum PropertyStatus {
+  ISSUED
+  RETURNED
+  DAMAGED
+  LOST
 }

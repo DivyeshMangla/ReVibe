@@ -13,6 +13,9 @@ import { TransfersModule } from './transfers/transfers.module';
 import { TrainingsModule } from './trainings/trainings.module';
 import { AcrsModule } from './acrs/acrs.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
+import { JoiningRelievingModule } from './joining-relieving/joining-relieving.module';
+import { EServiceBookModule } from './eservice-book/eservice-book.module';
+import { PropertyReturnsModule } from './property-returns/property-returns.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { EvaluationsModule } from './evaluations/evaluations.module';
     TrainingsModule,
     AcrsModule,
     EvaluationsModule,
+    JoiningRelievingModule,
+    EServiceBookModule,
+    PropertyReturnsModule,
   ],
 })
 export class AppModule {}
