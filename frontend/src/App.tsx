@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/layout/Layout';
+import { Dashboard } from './pages/Dashboard';
 import { PayrollDashboard } from './pages/PayrollDashboard';
 import { PayrollRunView } from './pages/PayrollRunView';
 import { EmployeesListPage } from './pages/EmployeesListPage';
@@ -39,7 +40,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/payroll" replace />} />
+            <Route index element={<Dashboard />} />
             <Route path="payroll" element={<PayrollDashboard />} />
             <Route path="payroll/:id" element={<PayrollRunView />} />
             <Route path="employees" element={<EmployeesListPage />} />

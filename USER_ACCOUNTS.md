@@ -1,6 +1,24 @@
-# User Accounts for Testing
+# User Accounts & System Guide
 
-All users have the same password: **password123**
+## Default Password for All Seed Accounts: **password123**
+## Default Password for New Employees: **Welcome@123**
+
+---
+
+## 🎯 QUICK START: How to Add an Employee
+
+### As HR:
+1. Login at `http://localhost` with `hr@company.com` / `password123`
+2. Click **"Add Employee"** button
+3. Fill in the form (all fields required)
+4. Submit → Alert shows the new employee's **email** and **default password (Welcome@123)**
+5. Give these credentials to the employee
+
+### As New Employee:
+1. Go to `http://localhost`
+2. Login with the email HR provided
+3. Use password: **Welcome@123**
+4. You now have an employee account!
 
 ---
 
