@@ -5,6 +5,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Seeding database...');
 
+  // Check if data already exists
+  const existingEmployees = await prisma.employee.count();
+  if (existingEmployees > 0) {
+    console.log('Database already seeded, skipping...');
+    return;
+  }
+
   // Create employees
   const employee1 = await prisma.employee.create({
     data: {
