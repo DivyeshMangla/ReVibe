@@ -1,43 +1,66 @@
-# HR/Payroll System
+# ReVibe HRMS
 
-Production-grade HRMS payroll platform built with NestJS, React, and PostgreSQL.
+Modern HR Management & Payroll System built with NestJS, React, and PostgreSQL.
 
-## Quick Start
+## 🚀 Quick Deploy
 
-### Option 1: Docker (Recommended)
+### Vercel (Frontend) + Railway (Backend)
 
 ```bash
-# Start all services with one command
-docker-compose up -d
+# 1. Deploy Backend (Railway)
+cd backend
+railway login
+railway init
+railway up
 
-# Access the application
-# Frontend: http://localhost
-# Backend: http://localhost:3000
-# Database: localhost:5432
+# 2. Deploy Frontend (Vercel)
+cd frontend
+vercel --prod
 ```
 
-See [DOCKER.md](DOCKER.md) for detailed Docker documentation.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.
 
-### Option 2: Local Development
+## 🏗️ Tech Stack
 
-#### Prerequisites
+- **Backend**: NestJS, TypeScript, Prisma, PostgreSQL
+- **Frontend**: React, Vite, TailwindCSS, Lucide Icons
+- **Auth**: JWT Authentication
+- **Deployment**: Vercel (Frontend) + Railway/Render (Backend)
+
+## ✨ Features
+
+- Employee Management
+- Payroll Processing with Approval Workflow
+- Leave Management
+- Performance Reviews & ACR
+- Training Management
+- Promotion Workflow
+- Salary Corrections
+- Job Profile Tracking
+- eService Book Management
+
+## 📦 Local Development
+
+### Prerequisites
 - Node.js 18+
 - PostgreSQL 14+
 - npm or yarn
 
-#### Backend Setup
+### Backend Setup
 
 ```bash
 cd backend
 npm install
 cp .env.example .env
 # Edit .env with your database credentials
-npx prisma migrate dev --name init
+npx prisma migrate dev
 npx prisma generate
 npm run start:dev
 ```
 
-#### Frontend Setup
+Backend runs at http://localhost:3000
+
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -45,29 +68,35 @@ npm install
 npm run dev
 ```
 
-## Documentation
+Frontend runs at http://localhost:5173
 
-All project documentation is maintained in **PROJECT_GUIDE.md**, including:
-- Architecture overview
-- API specifications
-- Data models
-- Setup instructions
-- Extension guidelines
+### Environment Variables
 
-## Features
+#### Backend (.env)
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/hrms"
+JWT_SECRET="your-secret-key"
+PORT=3000
+```
 
-- Payroll management with approval workflow
-- Salary slip corrections
-- Employee job profile tracking
-- Promotion management
-- HR chatbot (stub for LLM integration)
+#### Frontend (.env)
+```
+VITE_API_URL=http://localhost:3000/api
+```
 
-## Tech Stack
+## 📚 Documentation
 
-- **Backend**: NestJS, TypeScript, Prisma, PostgreSQL
-- **Frontend**: React, Vite, TailwindCSS, React Query
-- **Auth**: JWT (stub implementation)
+- [Deployment Guide](DEPLOYMENT.md) - Production deployment steps
+- [Project Guide](PROJECT_GUIDE.md) - Architecture and API docs
 
-## License
+## 🐳 Docker (Optional)
+
+```bash
+docker-compose up -d
+```
+
+Access at http://localhost (frontend) and http://localhost:3000 (backend)
+
+## 📝 License
 
 MIT
