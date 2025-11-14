@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from './components/layout/Layout';
 import { PayrollDashboard } from './pages/PayrollDashboard';
 import { PayrollRunView } from './pages/PayrollRunView';
+import { EmployeesListPage } from './pages/EmployeesListPage';
 import { EmployeeProfileView } from './pages/EmployeeProfileView';
 import { PromotionsPanel } from './pages/PromotionsPanel';
 import { SalaryCorrectionsView } from './pages/SalaryCorrectionsView';
@@ -33,6 +34,7 @@ function App() {
             <Route index element={<Navigate to="/payroll" replace />} />
             <Route path="payroll" element={<PayrollDashboard />} />
             <Route path="payroll/:id" element={<PayrollRunView />} />
+            <Route path="employees" element={<EmployeesListPage />} />
             <Route path="employees/:id" element={<EmployeeProfileView />} />
             <Route path="promotions" element={<PromotionsPanel />} />
             <Route path="corrections" element={<SalaryCorrectionsView />} />
