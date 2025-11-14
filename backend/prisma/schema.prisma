@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id            String         @id @default(uuid())
+  empCode       String         @unique
+  name          String
+  email         String         @unique
+  department    String
+  hireDate      DateTime
+  status        EmployeeStatus @default(ACTIVE)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  jobProfiles   JobProfile[]
+  salarySlips   SalarySlip[]
+  promotions    Promotion[]
+
+  @@map("employees")
+}
+
+model JobProfile {
+  id               String   @id @default(uuid())
+  employeeId       String
+  role             String
+  department       String
+  responsibilities String   @db.Text
+  effectiveDate    DateTime
+  createdAt        DateTime @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("job_profiles")
+  @@index([employeeId, effectiveDate])
+}
+
+model PayrollRun {
+  id          String          @id @default(uuid())
+  month       Int
+  year        Int
+  status      PayrollStatus   @default(DRAFT)
+  createdBy   String
+  approvedBy  String?
+  finalizedBy String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  salarySlips SalarySlip[]
+
+  @@unique([month, year])
+  @@map("payroll_runs")
+}
+
+model SalarySlip {
+  id            String   @id @default(uuid())
+  employeeId    String
+  payrollRunId  String
+  basicSalary   Float
+  hra           Float    @default(0)
+  da            Float    @default(0)
+  otherEarnings Float    @default(0)
+  pf            Float    @default(0)
+  esi           Float    @default(0)
+  tds           Float    @default(0)
+  otherDeductions Float  @default(0)
+  grossSalary   Float
+  netPay        Float
+  version       Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  employee     Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  payrollRun   PayrollRun    @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+  corrections  Correction[]
+
+  @@map("salary_slips")
+  @@index([employeeId, payrollRunId])
+}
+
+model Correction {
+  id            String           @id @default(uuid())
+  salarySlipId  String
+  requestedBy   String
+  reason        String           @db.Text
+  changes       String           @db.JsonB
+  status        CorrectionStatus @default(PENDING)
+  approvedBy    String?
+  rejectedBy    String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  salarySlip SalarySlip @relation(fields: [salarySlipId], references: [id], onDelete: Cascade)
+
+  @@map("corrections")
+  @@index([salarySlipId, status])
+}
+
+model Promotion {
+  id              String           @id @default(uuid())
+  employeeId      String
+  currentRole     String
+  proposedRole    String
+  currentSalary   Float
+  proposedSalary  Float
+  salaryIncrease  Float
+  reason          String           @db.Text
+  status          PromotionStatus  @default(PENDING)
+  effectiveDate   DateTime
+  requestedBy     String
+  approvedBy      String?
+  rejectedBy      String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("promotions")
+  @@index([employeeId, status])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String   @db.Text
+  response  String?  @db.Text
+  timestamp DateTime @default(now())
+
+  @@map("chat_messages")
+  @@index([userId, timestamp])
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+enum PayrollStatus {
+  DRAFT
+  APPROVED
+  FINALIZED
+}
+
+enum CorrectionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PromotionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EFFECTIVE
+}
