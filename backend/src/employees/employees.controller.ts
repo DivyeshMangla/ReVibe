@@ -33,4 +33,17 @@ export class EmployeesController {
   remove(@Param('id') id: string) {
     return this.employeesService.remove(id);
   }
+
+  @Patch(':id/role')
+  updateRole(
+    @Param('id') id: string,
+    @Body() body: { role: 'EMPLOYEE' | 'SUPERVISOR' | 'HR' | 'PAYROLL_ADMIN' }
+  ) {
+    return this.employeesService.updateUserRole(id, body.role);
+  }
+
+  @Post(':id/reset-password')
+  resetPassword(@Param('id') id: string) {
+    return this.employeesService.resetPassword(id);
+  }
 }

@@ -5,6 +5,8 @@ import { useState } from 'react';
 
 export function EmployeesListPage() {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [formData, setFormData] = useState({
     empCode: '',
     name: '',
@@ -22,20 +24,55 @@ export function EmployeesListPage() {
 
   const createMutation = useMutation({
     mutationFn: (data: typeof formData) => employeesApi.create(data),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ['employees'] });
       setShowAddModal(false);
       setFormData({ empCode: '', name: '', email: '', department: '', hireDate: '' });
-      alert('Employee added successfully!');
+      
+      const password = response.data.defaultPassword || 'Welcome@123';
+      alert(`Employee added successfully!\n\nLogin Credentials:\nEmail: ${response.data.email}\nPassword: ${password}\n\nPlease share these credentials with the employee.`);
     },
     onError: (error: any) => {
       alert(`Error: ${error.response?.data?.message || 'Failed to add employee'}`);
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Employee> }) => 
+      employeesApi.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      setShowEditModal(false);
+      setEditingEmployee(null);
+      alert('Employee updated successfully!');
+    },
+    onError: (error: any) => {
+      alert(`Error: ${error.response?.data?.message || 'Failed to update employee'}`);
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createMutation.mutate(formData);
+  };
+
+  const handleEdit = (employee: Employee) => {
+    setEditingEmployee(employee);
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingEmployee) {
+      updateMutation.mutate({
+        id: editingEmployee.id,
+        data: {
+          name: editingEmployee.name,
+          department: editingEmployee.department,
+          status: editingEmployee.status,
+        },
+      });
+    }
   };
 
   if (isLoading) {
@@ -123,7 +160,10 @@ export function EmployeesListPage() {
                     >
                       View
                     </Link>
-                    <button className="text-gray-600 hover:text-gray-900">
+                    <button 
+                      onClick={() => handleEdit(employee)}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
                       Edit
                     </button>
                   </td>
@@ -238,6 +278,108 @@ export function EmployeesListPage() {
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
                 >
                   {createMutation.isPending ? 'Adding...' : 'Add Employee'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Employee Modal */}
+      {showEditModal && editingEmployee && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4">Edit Employee</h2>
+            <form onSubmit={handleEditSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Employee Code
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={editingEmployee.empCode}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingEmployee.name}
+                  onChange={(e) => setEditingEmployee({ ...editingEmployee, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  disabled
+                  value={editingEmployee.email}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Department *
+                </label>
+                <select
+                  required
+                  value={editingEmployee.department}
+                  onChange={(e) => setEditingEmployee({ ...editingEmployee, department: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Engineering">Engineering</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Operations">Operations</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status *
+                </label>
+                <select
+                  required
+                  value={editingEmployee.status}
+                  onChange={(e) => setEditingEmployee({ ...editingEmployee, status: e.target.value as any })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
+                  <option value="TERMINATED">Terminated</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingEmployee(null);
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updateMutation.isPending}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300"
+                >
+                  {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
