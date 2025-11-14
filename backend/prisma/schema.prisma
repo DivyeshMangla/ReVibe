@@ -21,6 +21,11 @@ model Employee {
   jobProfiles   JobProfile[]
   salarySlips   SalarySlip[]
   promotions    Promotion[]
+  leaves        Leave[]
+  transfers     Transfer[]
+  trainings     Training[]
+  acrs          ACR[]
+  evaluations   Evaluation[]
 
   @@map("employees")
 }
@@ -158,4 +163,155 @@ enum PromotionStatus {
   APPROVED
   REJECTED
   EFFECTIVE
+}
+
+model Leave {
+  id            String      @id @default(uuid())
+  employeeId    String
+  leaveType     LeaveType
+  startDate     DateTime
+  endDate       DateTime
+  days          Int
+  reason        String      @db.Text
+  status        LeaveStatus @default(PENDING)
+  appliedAt     DateTime    @default(now())
+  approvedBy    String?
+  approvedAt    DateTime?
+  rejectedBy    String?
+  rejectedAt    DateTime?
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("leaves")
+  @@index([employeeId, status])
+}
+
+model Transfer {
+  id              String         @id @default(uuid())
+  employeeId      String
+  fromDepartment  String
+  toDepartment    String
+  fromLocation    String
+  toLocation      String
+  reason          String         @db.Text
+  effectiveDate   DateTime
+  status          TransferStatus @default(PENDING)
+  requestedAt     DateTime       @default(now())
+  approvedBy      String?
+  approvedAt      DateTime?
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("transfers")
+  @@index([employeeId, status])
+}
+
+model Training {
+  id              String         @id @default(uuid())
+  employeeId      String
+  trainingName    String
+  trainingType    String
+  startDate       DateTime
+  endDate         DateTime
+  duration        Int
+  trainer         String
+  status          TrainingStatus @default(SCHEDULED)
+  completionDate  DateTime?
+  score           Float?
+  feedback        String?        @db.Text
+  createdAt       DateTime       @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("trainings")
+  @@index([employeeId, status])
+}
+
+model ACR {
+  id              String    @id @default(uuid())
+  employeeId      String
+  year            Int
+  reviewPeriod    String
+  overallRating   Float
+  strengths       String    @db.Text
+  improvements    String    @db.Text
+  goals           String    @db.Text
+  reviewerName    String
+  reviewerEmail   String
+  status          ACRStatus @default(DRAFT)
+  submittedAt     DateTime?
+  approvedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("acrs")
+  @@index([employeeId, year])
+}
+
+model Evaluation {
+  id              String          @id @default(uuid())
+  employeeId      String
+  evaluationType  String
+  period          String
+  overallScore    Float
+  technicalScore  Float
+  softSkillScore  Float
+  punctuality     Float
+  teamwork        Float
+  comments        String          @db.Text
+  evaluatedBy     String
+  status          EvaluationStatus @default(DRAFT)
+  submittedAt     DateTime?
+  createdAt       DateTime        @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("evaluations")
+  @@index([employeeId, period])
+}
+
+enum LeaveType {
+  SICK
+  CASUAL
+  EARNED
+  MATERNITY
+  PATERNITY
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum TransferStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum TrainingStatus {
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum ACRStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum EvaluationStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
 }

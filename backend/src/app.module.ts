@@ -8,6 +8,8 @@ import { PromotionsModule } from './promotions/promotions.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
 import { HealthModule } from './health/health.module';
 
+import { LeavesModule } from './leaves/leaves.module';
+
 @Module({
   imports: [
     AuthModule,
@@ -18,6 +20,7 @@ import { HealthModule } from './health/health.module';
     PromotionsModule,
     ChatbotModule,
     HealthModule,
+    LeavesModule,
   ],
 })
 export class AppModule {}
