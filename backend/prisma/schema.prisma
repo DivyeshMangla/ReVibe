@@ -7,14 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String
+  role       UserRole @default(EMPLOYEE)
+  employeeId String?  @unique
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  EMPLOYEE
+  SUPERVISOR
+  HR
+  PAYROLL_ADMIN
+}
+
 model Employee {
   id            String         @id @default(uuid())
   empCode       String         @unique
   name          String
   email         String         @unique
   department    String
+  designation   String         @default("Employee")
   hireDate      DateTime
   status        EmployeeStatus @default(ACTIVE)
+  supervisorId  String?
+  supervisor    Employee?      @relation("SupervisorToTeam", fields: [supervisorId], references: [id])
+  team          Employee[]     @relation("SupervisorToTeam")
+  user          User?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 

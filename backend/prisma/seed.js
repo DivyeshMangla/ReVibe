@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
@@ -6,21 +7,82 @@ async function main() {
   console.log('Seeding database...');
 
   // Check if data already exists
-  const existingEmployees = await prisma.employee.count();
-  if (existingEmployees > 0) {
+  const existingUsers = await prisma.user.count();
+  if (existingUsers > 0) {
     console.log('Database already seeded, skipping...');
     return;
   }
 
-  // Create employees
+  // Hash password for all users
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // Create HR admin employee and user
+  const hrEmployee = await prisma.employee.create({
+    data: {
+      empCode: 'HR001',
+      name: 'Alice Admin',
+      email: 'hr@company.com',
+      department: 'Human Resources',
+      designation: 'HR Manager',
+      hireDate: new Date('2020-01-01'),
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: 'hr@company.com',
+      password: hashedPassword,
+      name: 'Alice Admin',
+      role: 'HR',
+      employeeId: hrEmployee.id,
+    },
+  });
+
+  // Create Supervisor employee and user
+  const supervisorEmployee = await prisma.employee.create({
+    data: {
+      empCode: 'SUP001',
+      name: 'Bob Supervisor',
+      email: 'supervisor@company.com',
+      department: 'Engineering',
+      designation: 'Engineering Manager',
+      hireDate: new Date('2021-01-01'),
+      status: 'ACTIVE',
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: 'supervisor@company.com',
+      password: hashedPassword,
+      name: 'Bob Supervisor',
+      role: 'SUPERVISOR',
+      employeeId: supervisorEmployee.id,
+    },
+  });
+
+  // Create regular employees under supervisor
   const employee1 = await prisma.employee.create({
     data: {
       empCode: 'EMP001',
       name: 'John Doe',
       email: 'john.doe@company.com',
       department: 'Engineering',
+      designation: 'Software Engineer',
       hireDate: new Date('2023-01-15'),
       status: 'ACTIVE',
+      supervisorId: supervisorEmployee.id,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: 'john.doe@company.com',
+      password: hashedPassword,
+      name: 'John Doe',
+      role: 'EMPLOYEE',
+      employeeId: employee1.id,
     },
   });
 
@@ -29,9 +91,21 @@ async function main() {
       empCode: 'EMP002',
       name: 'Jane Smith',
       email: 'jane.smith@company.com',
-      department: 'Marketing',
+      department: 'Engineering',
+      designation: 'Senior Software Engineer',
       hireDate: new Date('2023-03-20'),
       status: 'ACTIVE',
+      supervisorId: supervisorEmployee.id,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: 'jane.smith@company.com',
+      password: hashedPassword,
+      name: 'Jane Smith',
+      role: 'EMPLOYEE',
+      employeeId: employee2.id,
     },
   });
 
@@ -41,12 +115,33 @@ async function main() {
       name: 'Bob Johnson',
       email: 'bob.johnson@company.com',
       department: 'Sales',
+      designation: 'Sales Executive',
       hireDate: new Date('2023-06-10'),
       status: 'ACTIVE',
     },
   });
 
-  console.log('Created employees:', { employee1, employee2, employee3 });
+  await prisma.user.create({
+    data: {
+      email: 'bob.johnson@company.com',
+      password: hashedPassword,
+      name: 'Bob Johnson',
+      role: 'EMPLOYEE',
+      employeeId: employee3.id,
+    },
+  });
+
+  // Create Payroll Admin user (not employee)
+  await prisma.user.create({
+    data: {
+      email: 'payroll@company.com',
+      password: hashedPassword,
+      name: 'Carol Payroll',
+      role: 'PAYROLL_ADMIN',
+    },
+  });
+
+  console.log('Created users and employees with roles');
 
   // Create job profiles
   await prisma.jobProfile.create({
