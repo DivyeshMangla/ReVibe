@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { useState } from 'react';
 
 interface User {
   id: string;
@@ -10,22 +10,37 @@ interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, user: User) => void;
-  logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const initialState: AuthState = {
   user: null,
   token: localStorage.getItem('auth_token'),
   isAuthenticated: !!localStorage.getItem('auth_token'),
+};
+
+let authState = initialState;
+const listeners = new Set<(state: AuthState) => void>();
+
+export function useAuthStore() {
+  const [, forceUpdate] = useState({});
   
-  login: (token: string, user: User) => {
+  useState(() => {
+    const listener = () => forceUpdate({});
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  });
+
+  const login = (token: string, user: User) => {
     localStorage.setItem('auth_token', token);
-    set({ token, user, isAuthenticated: true });
-  },
-  
-  logout: () => {
+    authState = { token, user, isAuthenticated: true };
+    listeners.forEach(l => l(authState));
+  };
+
+  const logout = () => {
     localStorage.removeItem('auth_token');
-    set({ token: null, user: null, isAuthenticated: false });
-  },
-}));
+    authState = { token: null, user: null, isAuthenticated: false };
+    listeners.forEach(l => l(authState));
+  };
+
+  return { ...authState, login, logout };
+}
