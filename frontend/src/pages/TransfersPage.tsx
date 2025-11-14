@@ -1,4 +1,4 @@
-import { useQuery } from '@tantml:query/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
 
 export function TransfersPage() {
