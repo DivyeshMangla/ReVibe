@@ -30,12 +30,12 @@ WORKDIR /app
 # Install OpenSSL for Prisma
 RUN apk add --no-cache openssl
 
-# Copy package files
-COPY package*.json ./
+# Copy package files and lock file from builder
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
 
 # Install ALL dependencies (including dev dependencies for Prisma CLI)
-RUN npm ci
+RUN npm install
 
 # Generate Prisma Client in runner stage
 RUN npx prisma generate
