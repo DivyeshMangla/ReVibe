@@ -183,7 +183,193 @@ async function main() {
     console.log('Created correction request');
   }
 
-  console.log('Database seeded successfully!');
+  // Create sample leaves
+  await prisma.leave.create({
+    data: {
+      employeeId: employee1.id,
+      leaveType: 'CASUAL',
+      startDate: new Date('2025-12-01'),
+      endDate: new Date('2025-12-03'),
+      days: 3,
+      reason: 'Family function',
+      status: 'PENDING',
+    },
+  });
+
+  await prisma.leave.create({
+    data: {
+      employeeId: employee2.id,
+      leaveType: 'SICK',
+      startDate: new Date('2025-11-20'),
+      endDate: new Date('2025-11-22'),
+      days: 3,
+      reason: 'Medical checkup',
+      status: 'APPROVED',
+      approvedBy: 'manager',
+      approvedAt: new Date(),
+    },
+  });
+
+  console.log('Created leave requests');
+
+  // Create sample training
+  await prisma.training.create({
+    data: {
+      employeeId: employee1.id,
+      trainingName: 'Advanced Node.js Development',
+      trainingType: 'Technical',
+      startDate: new Date('2025-12-10'),
+      endDate: new Date('2025-12-14'),
+      duration: 5,
+      trainer: 'John Tech',
+      status: 'SCHEDULED',
+    },
+  });
+
+  await prisma.training.create({
+    data: {
+      employeeId: employee3.id,
+      trainingName: 'Sales Excellence Program',
+      trainingType: 'Soft Skills',
+      startDate: new Date('2025-11-01'),
+      endDate: new Date('2025-11-03'),
+      duration: 3,
+      trainer: 'Mary Sales',
+      status: 'COMPLETED',
+      completionDate: new Date('2025-11-03'),
+      score: 85.5,
+      feedback: 'Good performance',
+    },
+  });
+
+  console.log('Created trainings');
+
+  // Create sample ACR
+  await prisma.aCR.create({
+    data: {
+      employeeId: employee1.id,
+      year: 2025,
+      reviewPeriod: 'Jan-Dec 2025',
+      overallRating: 4.5,
+      strengths: 'Excellent technical skills, good team player',
+      improvements: 'Communication could be improved',
+      goals: 'Lead a major project, mentor junior developers',
+      reviewerName: 'Tech Manager',
+      reviewerEmail: 'manager@company.com',
+      status: 'SUBMITTED',
+      submittedAt: new Date(),
+    },
+  });
+
+  console.log('Created ACR');
+
+  // Create sample evaluation
+  await prisma.evaluation.create({
+    data: {
+      employeeId: employee2.id,
+      evaluationType: 'Quarterly',
+      period: 'Q3 2025',
+      overallScore: 4.2,
+      technicalScore: 4.0,
+      softSkillScore: 4.5,
+      punctuality: 5.0,
+      teamwork: 4.3,
+      comments: 'Consistently good performance',
+      evaluatedBy: 'Marketing Head',
+      status: 'APPROVED',
+    },
+  });
+
+  console.log('Created evaluation');
+
+  // Create sample transfer
+  await prisma.transfer.create({
+    data: {
+      employeeId: employee3.id,
+      fromDepartment: 'Sales',
+      toDepartment: 'Marketing',
+      fromLocation: 'Mumbai',
+      toLocation: 'Delhi',
+      reason: 'Career growth opportunity',
+      effectiveDate: new Date('2026-01-01'),
+      status: 'PENDING',
+    },
+  });
+
+  console.log('Created transfer request');
+
+  // Create sample joining/relieving
+  await prisma.joiningRelieving.create({
+    data: {
+      employeeId: employee1.id,
+      type: 'JOINING',
+      effectiveDate: new Date('2023-01-15'),
+      reason: 'New hire',
+      clearanceStatus: 'COMPLETED',
+      status: 'COMPLETED',
+      approvedBy: 'HR Manager',
+      approvedAt: new Date('2023-01-15'),
+    },
+  });
+
+  console.log('Created joining record');
+
+  // Create sample eService book entries
+  await prisma.eServiceBook.create({
+    data: {
+      employeeId: employee1.id,
+      entryType: 'Promotion',
+      entryDate: new Date('2024-06-01'),
+      description: 'Promoted to Senior Software Engineer',
+      verifiedBy: 'HR',
+      verifiedAt: new Date('2024-06-02'),
+    },
+  });
+
+  await prisma.eServiceBook.create({
+    data: {
+      employeeId: employee2.id,
+      entryType: 'Award',
+      entryDate: new Date('2024-08-15'),
+      description: 'Employee of the Month - August 2024',
+      verifiedBy: 'HR',
+      verifiedAt: new Date('2024-08-16'),
+    },
+  });
+
+  console.log('Created eService book entries');
+
+  // Create sample property returns
+  await prisma.propertyReturn.create({
+    data: {
+      employeeId: employee1.id,
+      itemName: 'Laptop - Dell XPS 15',
+      itemCategory: 'IT Equipment',
+      serialNumber: 'DELL123456',
+      issuedDate: new Date('2023-01-20'),
+      status: 'ISSUED',
+    },
+  });
+
+  await prisma.propertyReturn.create({
+    data: {
+      employeeId: employee2.id,
+      itemName: 'Office Mobile Phone',
+      itemCategory: 'Communication',
+      serialNumber: 'MOB789012',
+      issuedDate: new Date('2023-04-01'),
+      returnDate: new Date('2025-10-15'),
+      condition: 'Good',
+      status: 'RETURNED',
+      submittedAt: new Date('2025-10-15'),
+      verifiedBy: 'IT Admin',
+      verifiedAt: new Date('2025-10-16'),
+    },
+  });
+
+  console.log('Created property return records');
+
+  console.log('Database seeded successfully with all modules!');
 }
 
 main()
