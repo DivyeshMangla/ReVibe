@@ -36,7 +36,7 @@ lerna-debug.log*
 Thumbs.db
 
 # Prisma
-backend/prisma/migrations/
+# backend/prisma/migrations/ - migrations are now tracked for Docker
 
 # Misc
 *.tsbuildinfo
