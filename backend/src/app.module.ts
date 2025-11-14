@@ -9,6 +9,10 @@ import { ChatbotModule } from './chatbot/chatbot.module';
 import { HealthModule } from './health/health.module';
 
 import { LeavesModule } from './leaves/leaves.module';
+import { TransfersModule } from './transfers/transfers.module';
+import { TrainingsModule } from './trainings/trainings.module';
+import { AcrsModule } from './acrs/acrs.module';
+import { EvaluationsModule } from './evaluations/evaluations.module';
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { LeavesModule } from './leaves/leaves.module';
     ChatbotModule,
     HealthModule,
     LeavesModule,
+    TransfersModule,
+    TrainingsModule,
+    AcrsModule,
+    EvaluationsModule,
   ],
 })
 export class AppModule {}
